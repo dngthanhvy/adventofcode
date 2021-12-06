@@ -43,10 +43,40 @@ def validate_passport(passport):
     return all(result)
 
 
-def main():
+def part1():
     passports = [parse_passport(passport) for passport in read_input("input.txt")]
     valid_passports = sum([validate_passport(passport) for passport in passports])
-    print(valid_passports)
+    return valid_passports
+
+
+def validate_fields(passport):
+    result = []
+    for key, value in passport.items():
+        result.append(
+            (key == "byr" and 1920 <= int(value) <= 2002) or
+            (key == "iyr" and 2010 <= int(value) <= 2020) or
+            (key == "eyr" and 2020 <= int(value) <= 2030 and len(value) >= 4) or
+            (key == "hgt" and (value.endswith("cm") and 150 <= int(value[:-2]) <= 193) or (value.endswith("in") and 59 <= int(value[:-2]) <= 76)) or
+            (key == "hcl" and value.startswith("#") and len(value) == 7 and all(c in "0123456789abcdef" for c in value[1:])) or
+            (key == "ecl" and value in ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]) or
+            (key == "pid" and len(value) == 9) or
+            (key == "cid")
+        )
+    return all(result)
+
+
+def valid_passports(passports):
+    return [passport for passport in passports if validate_passport(passport)]
+
+
+def part2():
+    passports = [parse_passport(passport) for passport in read_input("input.txt")]
+    return sum([validate_fields(passport) for passport in valid_passports(passports)])
+
+
+def main():
+    print(f"Part 1: {part1()}")
+    print(f"Part 2: {part2()}")
 
 
 if __name__ == "__main__":
